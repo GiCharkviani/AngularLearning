@@ -1,0 +1,24 @@
+import { HttpClient } from "@angular/common/http";
+import { Component, OnInit } from "@angular/core";
+import { fromEvent, interval, Observable, timer, noop, of, concat, merge } from "rxjs";
+import { CombineLatestOperator } from "rxjs/internal-compatibility";
+import { map } from "rxjs/operators";
+import { COURSES, LESSONS } from "../../../server/db-data";
+import { createHttpObservable } from "../common/util";
+
+@Component({
+  selector: "about",
+  templateUrl: "./about.component.html",
+  styleUrls: ["./about.component.css"],
+})
+export class AboutComponent implements OnInit {
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    // const interval1$ = interval(1000);
+    // const interval2$ = interval1$.pipe(map(val => 10*val))
+
+    // const result$ = merge(interval1$, interval2$)
+    // result$.subscribe(console.log)
+  }
+}
