@@ -1,15 +1,18 @@
 import { Component, OnInit } from "@angular/core";
 import { Course } from "../model/course";
-import { interval, Observable, of, timer } from "rxjs";
+import { interval, Observable, of, throwError, timer } from "rxjs";
 import {
   catchError,
+  delay,
   delayWhen,
+  finalize,
   map,
   retryWhen,
   shareReplay,
   tap,
 } from "rxjs/operators";
 import { createHttpObservable } from "../common/util";
+import { Store } from "../common/store.service";
 
 @Component({
   selector: "home",
@@ -21,37 +24,15 @@ export class HomeComponent implements OnInit {
   beginnersCourses$: Observable<Course[]>;
   advancedCourses$: Observable<Course[]>;
 
-  constructor() {}
+  constructor(private store:Store) {}
 
   ngOnInit() {
-    const http$: Observable<Course[]> = createHttpObservable(
-      "https://httprequeststudy-default-rtdb.firebaseio.com/server.json"
-    );
-    const courses$ = http$.pipe(
-      tap(()=> {
-        console.log('http request executed')
-      }),
-      map(courses => {
-        return courses['courses']
-      }),
-      shareReplay()
-      )
 
-    this.beginnersCourses$ = courses$.pipe(
-      tap(console.log),
-      map(
-        courses =>{
+    const courses$ = this.store.courses$;
 
-          return courses.filter(course => course.category == 'BEGINNER')
-          }
-      )
-    )
+    this.beginnersCourses$ = this.store.selectBeginnerCourses();
 
-    this.advancedCourses$ = courses$.pipe(
-      map(
-        courses => courses.filter(course => course.category == 'ADVANCED')
-      )
-    )
+    this.advancedCourses$ = this.store.selectAdvancedCourses()
 
     // users.subscribe((courses) => {
     //   this.beginnersCourses = courses.filter(course => course.category == 'BEGINNER')
